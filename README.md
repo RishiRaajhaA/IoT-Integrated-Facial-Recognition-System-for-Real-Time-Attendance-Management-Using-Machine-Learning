@@ -16,15 +16,6 @@ This is a smart attendance tracking system using **facial recognition** and **Io
 
 ---
 
-## 👥 Team Members
-
-- Rishi Raajha A – CB.SC.U4AIE23335  
-- Kalyan Rohit – CB.SC.U4AIE23318  
-- P Tejadeep – CB.SC.U4AIE23328  
-- S Gangadhar – CB.SC.U4AIE23337  
-
----
-
 ## 🚀 Features
 
 - 🎯 Accurate face detection & recognition
