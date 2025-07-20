@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FaceTrack - Smart Attendance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    .video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; 
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 24, 51, 0.8);
+      z-index: -1;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background-color: rgba(10, 24, 51, 0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      z-index: 99;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: white;
+    }
+
+    .logo span {
+      color: #f8ac32;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-links li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links li a:hover {
+      color: #f8ac32;
+    }
+
+    .btn-login {
+      background-color: #fcbf49;
+      color: black;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 0 8px #fcbf49;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+      background-color: #ffb300;
+      color: white;
+      box-shadow: 0 0 15px #ffb300;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    .glow-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      color: white;
+      text-align: center;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      max-width: 600px;
+      margin: 3rem auto;
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 0 5px #f8ac32, 0 0 15px #f8ac32, 0 0 25px #f8ac32;
+      box-shadow: 0 0 20px rgba(248, 172, 50, 0.5), 0 0 40px rgba(248, 172, 50, 0.3);
+      animation: pulse-glow 2.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(248, 172, 50, 0.5), 0 0 40px rgba(248, 172, 50, 0.3);
+        text-shadow: 0 0 5px #f8ac32, 0 0 15px #f8ac32, 0 0 25px #f8ac32;
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(248, 172, 50, 0.8), 0 0 60px rgba(248, 172, 50, 0.6);
+        text-shadow: 0 0 8px #f8ac32, 0 0 20px #f8ac32, 0 0 35px #f8ac32;
+      }
+    }
+
+    @media(max-width: 600px) {
+      .glow-card {
+        font-size: 2rem;
+        padding: 2rem 1rem;
+      }
+    }
+
+    .features {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 3rem 2rem;
+      max-width: 1100px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(248, 172, 50, 0.6);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 250px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 35px rgba(248, 172, 50, 1), 0 0 60px rgba(248, 172, 50, 0.8);
+    }
+
+    .feature-box i {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 55px;
+      height: 55px;
+      background-color: #f8ac32;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(248, 172, 50, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .fab:hover {
+      background-color: #ffaa00;
+    }
+
+    .fab i {
+      color: #fff;
+      font-size: 1.5rem;
+    }
+
+    #contact {
+      padding: 5rem 2rem;
+      color: white;
+      background-color: rgba(10, 24, 51, 0.95);
+      z-index: 1;
+      position: relative;
+    }
+
+    #contact h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .contact-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    form {
+      flex: 1;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    form input, form textarea {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .glow-btn {
+      background-color: #f8ac32;
+      color: white;
+      font-weight: bold;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1rem;
+      border: none;
+      box-shadow: 0 0 12px #fcbf49, 0 0 24px #fcbf49;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .glow-btn:hover {
+      background-color: #ffaa00;
+      box-shadow: 0 0 18px #ffaa00, 0 0 30px #ffaa00;
+    }
+
+    .right-info-box {
+      flex: 1;
+      max-width: 500px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(248, 172, 50, 0.6);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .info-details p {
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      text-align: center;
+      color: white;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="{% static 'videos/futuristic-glowing-blue-sphere-composed-of-digital-lines-and-dots-on-a-dark-ba-SBV-351786540-preview.mp4' %}" type="video/mp4">
+    </video>
+  </div>
+  <div class="overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo"><span>FACETRACK</span></div>
+    <i class="fas fa-bars menu-toggle" onclick="toggleMenu()"></i>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">HOME</a></li>
+      <li><a href="#contact" class="nav-contact-link">Contact Us</i></a></li>
+    </ul>
+  </nav>  
+
+  <div class="glow-card" data-aos="fade-up">
+    Smart Attendance System
+  </div>
+
+  <section class="features" id="features">
+    <!-- Student Record Feature -->
+    <div class="feature-box" data-aos="fade-up" data-aos-delay="200">
+      <i class="fas fa-user-graduate"></i>
+      <div class="card">
+        <h3>STUDENT RECORD</h3>
+        <p>Click to login or register</p>
+        <form action="{% url 'student_login' %}" method="get">
+          <button type="submit" style="margin-top: 10px; padding: 8px 16px; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin Login Feature -->
+    <div class="feature-box" data-aos="fade-up" data-aos-delay="400">
+      <i class="fas fa-user-shield"></i>
+      <div class="card">
+        <h3>ADMIN LOGIN</h3>
+        <p>Login to access admin dashboard</p>
+        <form action="{% url 'login' %}" method="get">
+          <button type="submit" style="margin-top: 10px; padding: 8px 16px; background-color: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Admin Login
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="contact">
+    <h2>Feedback</h2>
+    <div class="contact-container">
+      <form action="/contact/" method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <button class="glow-btn">Send Message</button>
+      </form>
+
+      <div class="right-info-box">
+        <h3>Contact Info</h3>
+        <div class="info-details">
+          <p>Address: AMRITANAGAR </p>
+          <p>Email: teja98111@gmailcom</p>
+          <p>Phone: 6305873724</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 FaceTrack. All Rights Reserved.
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    AOS.init();
+
+    function toggleMenu() {
+      var menu = document.getElementById("navLinks");
+      menu.classList.toggle("active");
+    }
+  </script>
+</body>
+</html>

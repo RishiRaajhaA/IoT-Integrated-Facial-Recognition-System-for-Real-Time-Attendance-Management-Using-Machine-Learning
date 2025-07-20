@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 30px; }
+        form { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; }
+        button { background-color: #ffa500; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        h2 { text-align: center; }
+        video, canvas {
+            display: block;
+            margin: 10px auto;
+            border-radius: 10px;
+            max-width: 100%;
+        }
+        #captureBtn {
+            display: block;
+            margin: auto;
+            background-color: #007bff;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Student Registration</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Webcam View -->
+    <video id="video" width="400" height="300" autoplay></video>
+    <button type="button" id="captureBtn">Capture Photo</button>
+    <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+    <input type="hidden" name="image_data" id="image_data">
+
+    <label>Name:</label>
+    <input type="text" name="name" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <label>Roll Number:</label>
+    <input type="text" name="roll_number" required>
+
+    <label>Class:</label>
+    <input type="text" name="student_class" required>
+
+    <label>Username:</label>
+    <input type="text" name="username" required>
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Register</button>
+</form>
+
+<script>
+    // Access webcam
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const image_data = document.getElementById('image_data');
+    const captureBtn = document.getElementById('captureBtn');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        });
+
+    captureBtn.addEventListener('click', () => {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        image_data.value = dataUrl;
+        alert("Photo captured successfully!");
+    });
+</script>
+
+</body>
+</html>
